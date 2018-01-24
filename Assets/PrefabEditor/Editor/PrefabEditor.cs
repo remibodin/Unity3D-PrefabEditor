@@ -24,6 +24,12 @@ public class PrefabEditorAssetProcessor : UnityEditor.AssetModificationProcessor
         EditorApplication.projectWindowItemOnGUI += OnProjectItemUserEvent;
         EditorApplication.update = OnUpdateEditor;
         mTmpScenePath = Path.Combine(GetDirectoryName(), "PrefabTmpScene.unity");
+
+        // On windows editor, final path must be converted into UNIX format
+        // to match with AssetDatabase.GetAssetPath and OnWillSaveAssets param
+        #if UNITY_EDITOR_WIN
+        mTmpScenePath = mTmpScenePath.Replace('\\', '/');
+        #endif
     }
 
     /// <summary>
