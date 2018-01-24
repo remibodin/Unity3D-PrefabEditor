@@ -164,7 +164,16 @@ public class PrefabEditorAssetProcessor : UnityEditor.AssetModificationProcessor
         PrefabEditor.Instance.prefabRoot = prefab;
 
         //Instantiate the prefab and select it
-        PrefabEditor.Instance.prefabInstance = PrefabUtility.InstantiatePrefab(PrefabEditor.Instance.prefabRoot) as GameObject;
+        var prefabInstance = PrefabUtility.InstantiatePrefab(PrefabEditor.Instance.prefabRoot) as GameObject;
+        PrefabEditor.Instance.prefabInstance = prefabInstance;
+
+        if (prefab.GetComponentInChildren<CanvasRenderer>())
+        {
+            var canvas = new GameObject("Canvas");
+            canvas.AddComponent<Canvas>();
+            prefabInstance.transform.SetParent(canvas.transform);
+        }
+
         Selection.activeGameObject = PrefabEditor.Instance.prefabInstance;
 
         //Focus our scene view camera to aid in editing
