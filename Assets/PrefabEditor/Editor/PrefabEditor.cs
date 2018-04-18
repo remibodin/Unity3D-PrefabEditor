@@ -68,9 +68,9 @@ public class PrefabEditorAssetProcessor : UnityEditor.AssetModificationProcessor
         if (fileInfo.Extension == ".prefab")
         {
             OpenPrefabEditor(assetPath);
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     /// <summary>
