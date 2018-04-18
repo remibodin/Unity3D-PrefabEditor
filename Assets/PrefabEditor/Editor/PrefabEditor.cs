@@ -21,7 +21,6 @@ public class PrefabEditorAssetProcessor : UnityEditor.AssetModificationProcessor
     static PrefabEditorAssetProcessor()
     {
         SceneView.onSceneGUIDelegate += OnGUIScene;
-        EditorApplication.projectWindowItemOnGUI += OnProjectItemUserEvent;
         EditorApplication.update = OnUpdateEditor;
         mTmpScenePath = Path.Combine(GetDirectoryName(), "PrefabTmpScene.unity");
 
@@ -56,23 +55,22 @@ public class PrefabEditorAssetProcessor : UnityEditor.AssetModificationProcessor
     }
 
     /// <summary>
-    /// Catch double click on item in content browser
+    /// Call by the editor when user double click on any asset
     /// </summary>
-    /// <param name=guid></param>
-    /// <param name=area></param>
-    private static void OnProjectItemUserEvent(string guid, Rect area)
+    /// <param name="instanceID"></param>
+    /// <param name="line"></param>
+    /// <returns></returns>
+    [UnityEditor.Callbacks.OnOpenAssetAttribute(1)]
+    public static bool OpenPrefabEditorCallback(int instanceID, int line)
     {
-        if (Event.current.type == EventType.MouseDown && Event.current.button == 0
-            && Event.current.clickCount == 2 && area.Contains(Event.current.mousePosition))
+        string assetPath = AssetDatabase.GetAssetPath(instanceID);
+        var fileInfo = new FileInfo(assetPath);
+        if (fileInfo.Extension == ".prefab")
         {
-            var assetPath = AssetDatabase.GUIDToAssetPath(guid);
-            var fileInfo = new FileInfo(assetPath);
-            if (fileInfo.Extension == ".prefab")
-            {
-                Event.current.Use();
-                OpenPrefabEditor(assetPath);
-            }
+            OpenPrefabEditor(assetPath);
+            return false;
         }
+        return true;
     }
 
     /// <summary>
